@@ -16,10 +16,10 @@ public class FollowCam : MonoBehaviour
     }
 
     // Update is called once per frame
-    private void FixedUpdate()
+    private void Update()
     {
         Vector3 targetCanPos = target.position + offset;
 
-        transform.position = Vector3.Lerp(transform.position, targetCanPos, smoothing * Time.fixedDeltaTime);
+        transform.position = Vector3.Lerp(transform.position, targetCanPos, smoothing * Time.deltaTime);
     }
 }
