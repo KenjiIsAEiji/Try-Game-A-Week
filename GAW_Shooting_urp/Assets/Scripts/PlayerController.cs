@@ -8,6 +8,16 @@ public class PlayerController : MonoBehaviour
     public Vector2 Velocity { get; set; }
     public Vector2 LookPosition { get; set; }
 
+    public bool FireFlag { get; set; }
+    private bool fireTrigger = false;
+    [SerializeField] GameObject Bullet;
+    [SerializeField] Transform firePoint;
+    [SerializeField] ParticleSystem fireFX;
+    [SerializeField] float fireRaito = 0.1f;
+    [SerializeField] float bulletVelocity = 10f;
+    [SerializeField] float RecoilRange = 5f;
+
+
     Rigidbody PlayerRb;
 
     [SerializeField] float PlayerSpeed = 10f;
@@ -31,6 +41,21 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (FireFlag)
+        {
+            if (!fireTrigger)
+            {
+                StartCoroutine(FireTimer());
+                fireTrigger = true;
+            }
+        }
+        else
+        {
+            fireTrigger = false;
+            StopCoroutine(FireTimer());
+            firePoint.localEulerAngles = Vector3.zero;
+        }
+        
         if (Physics.Linecast(charaRay.position, (charaRay.position - transform.up * charaRayRange)))
         {
             isGrounded = true;
@@ -63,6 +88,30 @@ public class PlayerController : MonoBehaviour
         else
         {
             PlayerRb.drag = 0f;
+        }
+    }
+
+    void BulletFire()
+    {
+        GameObject bullet = Instantiate(Bullet, firePoint.position, firePoint.rotation);
+        bullet.GetComponent<Rigidbody>().AddForce(firePoint.forward * bulletVelocity);
+
+        fireFX.Play();
+
+        Destroy(bullet, 1f);
+
+        float recoil = Random.Range(-RecoilRange, RecoilRange);
+        firePoint.localRotation = Quaternion.AngleAxis(recoil, Vector3.up);
+    }
+
+    IEnumerator FireTimer()
+    {
+        while (true)
+        {
+            Debug.Log("Fire!");
+            BulletFire();
+            yield return new WaitForSeconds(fireRaito);
+            if (!FireFlag) yield break;
         }
     }
 }
