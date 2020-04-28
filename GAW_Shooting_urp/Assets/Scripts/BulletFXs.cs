@@ -10,7 +10,7 @@ public class BulletFXs : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         ContactPoint contact = collision.contacts[0];
-        NomalHitFX(contact.point, Quaternion.Euler(contact.normal));
+        NomalHitFX(contact.point, Quaternion.LookRotation(contact.normal));
         Destroy(this.gameObject);
     }
 
