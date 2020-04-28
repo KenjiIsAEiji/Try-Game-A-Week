@@ -13,8 +13,9 @@ public class Raizer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        period += Random.Range(-(period - 1f), 0f);
         position = transform.position;
-        velocity = Vector3.up * 10f;
+        velocity = -transform.forward + Vector3.up * 5f;
     }
 
     // Update is called once per frame
@@ -31,6 +32,7 @@ public class Raizer : MonoBehaviour
         if(period < 0f)
         {
             Destroy(this.gameObject);
+            target.transform.GetComponent<EnemyController>().Damage(5);
             return;
         }
 

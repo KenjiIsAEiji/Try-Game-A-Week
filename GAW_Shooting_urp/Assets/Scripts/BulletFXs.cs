@@ -11,12 +11,23 @@ public class BulletFXs : MonoBehaviour
     {
         ContactPoint contact = collision.contacts[0];
         NomalHitFX(contact.point, Quaternion.LookRotation(contact.normal));
+
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            collision.gameObject.GetComponent<EnemyController>().Damage(1);
+            EnemyHitFX(contact.point, Quaternion.LookRotation(contact.normal));
+        }
+
         Destroy(this.gameObject);
     }
 
     void NomalHitFX(Vector3 point,Quaternion rotation)
     {
         Instantiate(nomalHitPaticle, point,rotation);
+    }
+    void EnemyHitFX(Vector3 point, Quaternion rotation)
+    {
+        Instantiate(EnemyHitPaticle, point, rotation);
     }
 
 }

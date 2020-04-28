@@ -314,7 +314,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 1, b: 1, a: 1}
+      maxColor: {r: 1, g: 0.7056854, b: 0, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -376,7 +376,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.58
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -752,7 +752,7 @@ ParticleSystem:
     serializedVersion: 6
     enabled: 1
     type: 4
-    angle: 72.269646
+    angle: 55.17643
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 1
@@ -3917,7 +3917,7 @@ ParticleSystem:
     light: {fileID: 474100807}
     randomDistribution: 1
     color: 1
-    range: 1
+    range: 0
     intensity: 1
     rangeCurve:
       serializedVersion: 2
@@ -5031,7 +5031,7 @@ GameObject:
   - component: {fileID: 5101050809264518232}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5157,7 +5157,7 @@ MonoBehaviour:
       m_Calls: []
   m_ActionEvents: []
   m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
+  m_DefaultControlScheme: Keyboard&Mouse
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
@@ -5192,6 +5192,8 @@ MonoBehaviour:
   fireRaito: 0.1
   bulletVelocity: 200
   RecoilRange: 5
+  Raizer: {fileID: 5029182905196069333, guid: f09f652ff0ae3e440b372568ef8f89f2, type: 3}
+  TestTarget: {fileID: 0}
   PlayerSpeed: 5.33
   charaRay: {fileID: 5101050808557951278}
   charaRayRange: 0.32

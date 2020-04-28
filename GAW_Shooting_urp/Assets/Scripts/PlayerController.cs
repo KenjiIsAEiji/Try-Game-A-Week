@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     public bool Fire2Flag { get; set; }
 
 
+
     [Header("弾丸発射関連")]
     [SerializeField] GameObject Bullet;
     [SerializeField] Transform firePoint;
@@ -22,8 +23,11 @@ public class PlayerController : MonoBehaviour
 
     [Header("追尾レーザ関連")]
     [SerializeField] GameObject Raizer;
-    [SerializeField] Transform TestTarget;
     private bool fire2Trigger = false;
+    [SerializeField] Transform pointer;
+    [SerializeField] LayerMask TargettingLayer;
+    [SerializeField] List<Transform> TargetEnemys;
+    private bool targetting = false;
 
     Rigidbody PlayerRb;
 
@@ -48,6 +52,39 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        Ray ray = MainCam.ScreenPointToRay(LookPosition);
+
+        plane.SetNormalAndPosition(Vector3.up, transform.localPosition);
+        if (plane.Raycast(ray, out distance))
+        {
+            Vector3 lookPoint = ray.GetPoint(distance);
+            pointer.position = lookPoint;
+            transform.LookAt(lookPoint);
+        }
+
+        if (Fire2Flag)
+        {
+            RaycastHit hit;
+            if(Physics.Linecast(transform.position,pointer.position, out hit,TargettingLayer))
+            {
+                Transform hitTarget = hit.transform;
+                if (!TargetEnemys.Contains(hitTarget))
+                {
+                    TargetEnemys.Add(hitTarget);
+                    hitTarget.GetComponent<EnemyController>().TargetFromPlayer();
+                }
+            }
+            targetting = true;
+        }
+        else
+        {
+            if (targetting)
+            {
+                RaizerFire();
+                targetting = false;
+            }
+        }
+
         if (FireFlag)
         {
             if (!fireTrigger)
@@ -63,18 +100,7 @@ public class PlayerController : MonoBehaviour
             firePoint.localEulerAngles = Vector3.zero;
         }
 
-        if (Fire2Flag)
-        {
-            if (!fire2Trigger)
-            {
-                RaizerFire();
-                fire2Trigger = true;
-            }
-        }
-        else
-        {
-            fire2Trigger = false;
-        }
+        
         
         if (Physics.Linecast(charaRay.position, (charaRay.position - transform.up * charaRayRange)))
         {
@@ -86,14 +112,7 @@ public class PlayerController : MonoBehaviour
         }
         Debug.DrawLine(charaRay.position, (charaRay.position - transform.up * charaRayRange));
 
-        Ray ray = MainCam.ScreenPointToRay(LookPosition);
-
-        plane.SetNormalAndPosition(Vector3.up, transform.localPosition);
-        if(plane.Raycast(ray,out distance))
-        {
-            Vector3 lookPoint = ray.GetPoint(distance);
-            transform.LookAt(lookPoint);
-        }
+        
     }
 
     // Update is called once per frame
@@ -126,8 +145,13 @@ public class PlayerController : MonoBehaviour
 
     void RaizerFire()
     {
-        GameObject raizer = Instantiate(Raizer, firePoint.position, firePoint.rotation);
-        raizer.GetComponent<Raizer>().target = TestTarget;
+        for(int i = 0; i < TargetEnemys.Count; i++)
+        {
+            GameObject raizer = Instantiate(Raizer, firePoint.position, firePoint.rotation);
+
+            raizer.GetComponent<Raizer>().target = TargetEnemys[i];
+        }
+        TargetEnemys = new List<Transform>();
     }
 
     IEnumerator FireTimer()

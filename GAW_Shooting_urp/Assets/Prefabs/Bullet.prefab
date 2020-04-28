@@ -78,7 +78,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nomalHitPaticle: {fileID: 2438307568124501905, guid: a3c4c062ff656c14f996ca6b8a68ab79,
     type: 3}
-  EnemyHitPaticle: {fileID: 0}
+  EnemyHitPaticle: {fileID: 8914128320752288165, guid: 8734d7074426cde41b173d1e30d0f047,
+    type: 3}
 --- !u!1 &3732139852423866000
 GameObject:
   m_ObjectHideFlags: 0
