@@ -23,11 +23,13 @@ public class BulletFXs : MonoBehaviour
 
     void NomalHitFX(Vector3 point,Quaternion rotation)
     {
-        Instantiate(nomalHitPaticle, point,rotation);
+        GameObject obj = Instantiate(nomalHitPaticle, point,rotation);
+        Destroy(obj, 3f);
     }
     void EnemyHitFX(Vector3 point, Quaternion rotation)
     {
-        Instantiate(EnemyHitPaticle, point, rotation);
+        GameObject obj = Instantiate(EnemyHitPaticle, point, rotation);
+        Destroy(obj, 3f);
     }
 
 }

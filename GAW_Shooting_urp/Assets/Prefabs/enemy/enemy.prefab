@@ -296,7 +296,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 2
+  m_Speed: 1.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -324,7 +324,7 @@ MonoBehaviour:
   TargetMark: {fileID: 897909581}
   MaxHelth: 5
   EnemyHelth: 0
-  DeadFX: {fileID: 3794083608453560365, guid: 70a8dc9f8c06c2145ae1cf859dcafbd5, type: 3}
+  DeadFX: {fileID: 1150934714579380, guid: 779aa8c25fbd0e1488637639c9fff976, type: 3}
 --- !u!1 &40116374157881351
 GameObject:
   m_ObjectHideFlags: 0

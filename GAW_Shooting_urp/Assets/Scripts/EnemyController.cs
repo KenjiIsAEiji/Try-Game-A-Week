@@ -39,8 +39,9 @@ public class EnemyController : MonoBehaviour
         EnemyHelth -= damagePoint;
         if (EnemyHelth <= 0)
         {
-            Instantiate(DeadFX, transform.position, Quaternion.LookRotation(Vector3.up));
+            GameObject obj = Instantiate(DeadFX, transform.position, Quaternion.LookRotation(Vector3.up));
             Destroy(this.gameObject);
+            Destroy(obj, 3f);
         }
     }
 }

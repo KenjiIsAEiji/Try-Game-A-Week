@@ -15,7 +15,7 @@ public class Raizer : MonoBehaviour
     {
         period += Random.Range(-(period - 1f), 0f);
         position = transform.position;
-        velocity = -transform.forward + Vector3.up * 5f;
+        velocity = -transform.forward * 10f;
     }
 
     // Update is called once per frame

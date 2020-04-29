@@ -18,8 +18,12 @@ public class MoveInput : MonoBehaviour
     {
         player.Velocity = input.Player.Move.ReadValue<Vector2>();
         player.LookPosition = input.Player.Look.ReadValue<Vector2>();
-        player.FireFlag = input.Player.Fire.ReadValue<float>() > InputSystem.settings.defaultButtonPressPoint;
-        player.Fire2Flag = input.Player.Fire2.ReadValue<float>() > InputSystem.settings.defaultButtonPressPoint;
+        
+        float pressPoint = InputSystem.settings.defaultButtonPressPoint;
+
+        player.FireFlag = input.Player.Fire.ReadValue<float>() > pressPoint;
+        player.Fire2Flag = input.Player.Fire2.ReadValue<float>() > pressPoint;
+        player.ReloadButton = input.Player.Reload.ReadValue<float>() > pressPoint;
     }
    
 }

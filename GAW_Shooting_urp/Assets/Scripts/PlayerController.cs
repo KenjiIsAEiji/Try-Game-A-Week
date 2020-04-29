@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     public Vector2 LookPosition { get; set; }
     public bool FireFlag { get; set; }
     public bool Fire2Flag { get; set; }
+    public bool ReloadButton { get; set; }
 
     [Header("弾丸発射関連")]
     [SerializeField] GameObject Bullet;
@@ -35,10 +36,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float charaRayRange = 0.2f;
     private bool isGrounded;
     private float defaultDrag;
-
     [SerializeField] Camera MainCam;
     Plane plane = new Plane();
     private float distance = 0;
+
+    [Header("弾丸管理")]
+    public int MaxBullets = 35;
+    public int magazine = 0;
+    public bool reloading = false;
+    [SerializeField] float ReloadTime = 5f;
 
 
     // Start is called before the first frame update
@@ -46,6 +52,7 @@ public class PlayerController : MonoBehaviour
     {
         PlayerRb = GetComponent<Rigidbody>();
         defaultDrag = PlayerRb.drag;
+        magazine = MaxBullets;
     }
 
     private void Update()
@@ -83,6 +90,11 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        if(ReloadButton && !reloading)
+        {
+            StartCoroutine(Reload());
+        }
+
         if (FireFlag)
         {
             if (!fireTrigger)
@@ -97,8 +109,6 @@ public class PlayerController : MonoBehaviour
             StopCoroutine(FireTimer());
             firePoint.localEulerAngles = Vector3.zero;
         }
-
-        
         
         if (Physics.Linecast(charaRay.position, (charaRay.position - transform.up * charaRayRange)))
         {
@@ -109,8 +119,6 @@ public class PlayerController : MonoBehaviour
             isGrounded = false;
         }
         Debug.DrawLine(charaRay.position, (charaRay.position - transform.up * charaRayRange));
-
-        
     }
 
     // Update is called once per frame
@@ -130,15 +138,20 @@ public class PlayerController : MonoBehaviour
 
     void BulletFire()
     {
-        GameObject bullet = Instantiate(Bullet, firePoint.position, firePoint.rotation);
-        bullet.GetComponent<Rigidbody>().AddForce(firePoint.forward * bulletVelocity);
+        if(magazine > 0 && !reloading)
+        {
+            GameObject bullet = Instantiate(Bullet, firePoint.position, firePoint.rotation);
+            bullet.GetComponent<Rigidbody>().AddForce(firePoint.forward * bulletVelocity);
 
-        fireFX.Play();
+            magazine--;
 
-        Destroy(bullet, 1f);
+            fireFX.Play();
 
-        float recoil = Random.Range(-RecoilRange, RecoilRange);
-        firePoint.localRotation = Quaternion.AngleAxis(recoil, Vector3.up);
+            Destroy(bullet, 1f);
+
+            float recoil = Random.Range(-RecoilRange, RecoilRange);
+            firePoint.localRotation = Quaternion.AngleAxis(recoil, Vector3.up);
+        }
     }
 
     void RaizerFire()
@@ -150,6 +163,15 @@ public class PlayerController : MonoBehaviour
             raizer.GetComponent<Raizer>().target = TargetEnemys[i];
         }
         TargetEnemys = new List<Transform>();
+    }
+
+    IEnumerator Reload()
+    {
+        reloading = true;
+        yield return new WaitForSeconds(ReloadTime);
+        magazine = MaxBullets;
+        reloading = false;
+        yield break;
     }
 
     IEnumerator FireTimer()
