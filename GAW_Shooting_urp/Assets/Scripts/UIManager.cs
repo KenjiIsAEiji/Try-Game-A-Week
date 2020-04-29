@@ -6,16 +6,29 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     [SerializeField] PlayerController player;
-    [Header("UI elements")]
+    [Header("BulletsHUD")]
+    [SerializeField] Image BulletHUDBoder;
     [SerializeField] Text BulletsText;
     [SerializeField] Gradient BulletsTextColor;
     [SerializeField] Text reloadWarning;
     [SerializeField] Text reloadingText;
+    [Header("RaizerHUD")]
+    [SerializeField] Image RaizerHUDBoder;
+    [SerializeField] Text rechargeWarning;
+    [SerializeField] Text readyText;
+    [SerializeField] Image progressBar;
 
+    
     // Start is called before the first frame update
     void Start()
     {
 
+    }
+
+    private void Update()
+    {
+        RaizerHUDBoder.enabled = player.RaizerMode;
+        BulletHUDBoder.enabled = !player.RaizerMode;
     }
 
     // Update is called once per frame
@@ -30,7 +43,13 @@ public class UIManager : MonoBehaviour
         BulletsText.color = BulletsTextColor.Evaluate(amount);
 
         reloadWarning.gameObject.SetActive(amount >= 1 && !player.reloading);
-
         reloadingText.gameObject.SetActive(player.reloading);
+
+        //
+        float fill = player.Casting / player.RecastTime;
+        progressBar.fillAmount = fill;
+
+        readyText.gameObject.SetActive(fill >= 1f);
+        rechargeWarning.gameObject.SetActive(!(fill >= 1f));
     }
 }

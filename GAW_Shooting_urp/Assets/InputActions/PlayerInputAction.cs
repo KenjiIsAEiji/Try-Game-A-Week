@@ -57,6 +57,14 @@ public class @PlayerInputAction : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""SwitchWepon"",
+                    ""type"": ""Button"",
+                    ""id"": ""8f0da927-73ee-412d-a00e-157da8d4610b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -299,6 +307,17 @@ public class @PlayerInputAction : IInputActionCollection, IDisposable
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Reload"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""48f0d30a-6061-4599-908a-52ccd4dcea5e"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""SwitchWepon"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -881,6 +900,7 @@ public class @PlayerInputAction : IInputActionCollection, IDisposable
         m_Player_Fire = m_Player.FindAction("Fire", throwIfNotFound: true);
         m_Player_Fire2 = m_Player.FindAction("Fire2", throwIfNotFound: true);
         m_Player_Reload = m_Player.FindAction("Reload", throwIfNotFound: true);
+        m_Player_SwitchWepon = m_Player.FindAction("SwitchWepon", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -947,6 +967,7 @@ public class @PlayerInputAction : IInputActionCollection, IDisposable
     private readonly InputAction m_Player_Fire;
     private readonly InputAction m_Player_Fire2;
     private readonly InputAction m_Player_Reload;
+    private readonly InputAction m_Player_SwitchWepon;
     public struct PlayerActions
     {
         private @PlayerInputAction m_Wrapper;
@@ -956,6 +977,7 @@ public class @PlayerInputAction : IInputActionCollection, IDisposable
         public InputAction @Fire => m_Wrapper.m_Player_Fire;
         public InputAction @Fire2 => m_Wrapper.m_Player_Fire2;
         public InputAction @Reload => m_Wrapper.m_Player_Reload;
+        public InputAction @SwitchWepon => m_Wrapper.m_Player_SwitchWepon;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -980,6 +1002,9 @@ public class @PlayerInputAction : IInputActionCollection, IDisposable
                 @Reload.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnReload;
                 @Reload.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnReload;
                 @Reload.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnReload;
+                @SwitchWepon.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSwitchWepon;
+                @SwitchWepon.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSwitchWepon;
+                @SwitchWepon.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSwitchWepon;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -999,6 +1024,9 @@ public class @PlayerInputAction : IInputActionCollection, IDisposable
                 @Reload.started += instance.OnReload;
                 @Reload.performed += instance.OnReload;
                 @Reload.canceled += instance.OnReload;
+                @SwitchWepon.started += instance.OnSwitchWepon;
+                @SwitchWepon.performed += instance.OnSwitchWepon;
+                @SwitchWepon.canceled += instance.OnSwitchWepon;
             }
         }
     }
@@ -1160,6 +1188,7 @@ public class @PlayerInputAction : IInputActionCollection, IDisposable
         void OnFire(InputAction.CallbackContext context);
         void OnFire2(InputAction.CallbackContext context);
         void OnReload(InputAction.CallbackContext context);
+        void OnSwitchWepon(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

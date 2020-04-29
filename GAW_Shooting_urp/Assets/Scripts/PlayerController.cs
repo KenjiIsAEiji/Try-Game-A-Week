@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour
     public bool FireFlag { get; set; }
     public bool Fire2Flag { get; set; }
     public bool ReloadButton { get; set; }
+    public bool SwitchWepon { get; set; }
+    private bool swithTrigger = false;
 
     [Header("弾丸発射関連")]
     [SerializeField] GameObject Bullet;
@@ -21,12 +23,14 @@ public class PlayerController : MonoBehaviour
     private bool fireTrigger = false;
 
     [Header("追尾レーザ関連")]
+    public bool RaizerMode = false;
     [SerializeField] GameObject Raizer;
-    private bool fire2Trigger = false;
     [SerializeField] Transform pointer;
     [SerializeField] LayerMask TargettingLayer;
     [SerializeField] List<Transform> TargetEnemys;
     private bool targetting = false;
+    public float RecastTime = 45f;
+    public float Casting = 0;
 
     Rigidbody PlayerRb;
 
@@ -67,49 +71,80 @@ public class PlayerController : MonoBehaviour
             transform.LookAt(lookPoint);
         }
 
-        if (Fire2Flag)
+        if (SwitchWepon)
         {
-            RaycastHit hit;
-            if(Physics.Linecast(transform.position,pointer.position, out hit,TargettingLayer))
+            if (!swithTrigger)
             {
-                Transform hitTarget = hit.transform;
-                if (!TargetEnemys.Contains(hitTarget))
-                {
-                    TargetEnemys.Add(hitTarget);
-                    hitTarget.GetComponent<EnemyController>().TargetFromPlayer();
-                }
+                swithTrigger = true;
+                RaizerMode = !RaizerMode;
             }
-            targetting = true;
         }
         else
         {
-            if (targetting)
+            swithTrigger = false;
+        }
+
+        if(Casting < RecastTime)
+        {
+            Casting += Time.deltaTime;
+        }
+        else
+        {
+            Casting = RecastTime;
+        }
+
+        if (RaizerMode)
+        {
+            if (FireFlag)
             {
-                RaizerFire();
-                targetting = false;
+                if (Casting >= RecastTime)
+                {
+                    RaycastHit hit;
+                    if (Physics.Linecast(transform.position, pointer.position, out hit, TargettingLayer))
+                    {
+                        Transform hitTarget = hit.transform;
+                        if (!TargetEnemys.Contains(hitTarget))
+                        {
+                            TargetEnemys.Add(hitTarget);
+                            hitTarget.GetComponent<EnemyController>().TargetFromPlayer();
+                        }
+                    }
+                    targetting = true;
+                }
+            }
+            else
+            {
+                if (targetting)
+                {
+                    RaizerFire();
+                    targetting = false;
+                    Casting = 0;
+                }
+            }
+        }
+        else
+        {
+            if (FireFlag)
+            {
+                if (!fireTrigger)
+                {
+                    StartCoroutine(FireTimer());
+                    fireTrigger = true;
+                }
+            }
+            else
+            {
+                fireTrigger = false;
+                StopCoroutine(FireTimer());
+                firePoint.localEulerAngles = Vector3.zero;
             }
         }
 
-        if(ReloadButton && !reloading)
+        if (ReloadButton && !reloading)
         {
             StartCoroutine(Reload());
         }
 
-        if (FireFlag)
-        {
-            if (!fireTrigger)
-            {
-                StartCoroutine(FireTimer());
-                fireTrigger = true;
-            }
-        }
-        else
-        {
-            fireTrigger = false;
-            StopCoroutine(FireTimer());
-            firePoint.localEulerAngles = Vector3.zero;
-        }
-        
         if (Physics.Linecast(charaRay.position, (charaRay.position - transform.up * charaRayRange)))
         {
             isGrounded = true;
@@ -118,7 +153,6 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = false;
         }
-        Debug.DrawLine(charaRay.position, (charaRay.position - transform.up * charaRayRange));
     }
 
     // Update is called once per frame

@@ -24,6 +24,7 @@ public class MoveInput : MonoBehaviour
         player.FireFlag = input.Player.Fire.ReadValue<float>() > pressPoint;
         player.Fire2Flag = input.Player.Fire2.ReadValue<float>() > pressPoint;
         player.ReloadButton = input.Player.Reload.ReadValue<float>() > pressPoint;
+        player.SwitchWepon = input.Player.SwitchWepon.ReadValue<float>() > pressPoint;
     }
    
 }
