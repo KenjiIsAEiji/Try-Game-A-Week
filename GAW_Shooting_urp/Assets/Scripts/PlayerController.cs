@@ -13,6 +13,8 @@ public class PlayerController : MonoBehaviour
     public bool SwitchWepon { get; set; }
     private bool swithTrigger = false;
 
+    [SerializeField] PlayerStatus status;
+
     [Header("弾丸発射関連")]
     [SerializeField] GameObject Bullet;
     [SerializeField] Transform firePoint;
@@ -178,6 +180,7 @@ public class PlayerController : MonoBehaviour
             bullet.GetComponent<Rigidbody>().AddForce(firePoint.forward * bulletVelocity);
 
             magazine--;
+            status.UseBullet();
 
             fireFX.Play();
 
@@ -190,6 +193,7 @@ public class PlayerController : MonoBehaviour
 
     void RaizerFire()
     {
+        status.UseRaizer();
         for(int i = 0; i < TargetEnemys.Count; i++)
         {
             GameObject raizer = Instantiate(Raizer, firePoint.position, firePoint.rotation);

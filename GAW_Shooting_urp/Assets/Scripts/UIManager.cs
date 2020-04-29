@@ -6,6 +6,9 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     [SerializeField] PlayerController player;
+    [SerializeField] PlayerStatus status;
+    [Header("StatusUI")]
+    [SerializeField] Image LpBar;
     [Header("BulletsHUD")]
     [SerializeField] Image BulletHUDBoder;
     [SerializeField] Text BulletsText;
@@ -34,6 +37,9 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
+        float lpAmount = status.PlayerLp / status.PlayerMaxLp;
+        LpBar.fillAmount = Mathf.Lerp(0f, 0.5f,lpAmount);
+        
         string nowBulletsTxt = "<b>" + player.magazine + "</b>";
         
         nowBulletsTxt += "<size=BulletsText.fontSize / 2>/" + player.MaxBullets + "</size>";

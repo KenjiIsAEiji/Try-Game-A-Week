@@ -9,8 +9,8 @@ public class EnemyController : MonoBehaviour
     [SerializeField] NavMeshAgent agent;
     [SerializeField] GameObject TargetMark;
 
-    [SerializeField] int MaxHelth = 5;
-    public int EnemyHelth;
+    [SerializeField] float MaxHelth = 5;
+    public float EnemyHelth;
 
     [SerializeField] GameObject DeadFX;
 
@@ -34,7 +34,7 @@ public class EnemyController : MonoBehaviour
         TargetMark.SetActive(true);
     }
 
-    public void Damage(int damagePoint)
+    public void Damage(float damagePoint)
     {
         EnemyHelth -= damagePoint;
         if (EnemyHelth <= 0)
