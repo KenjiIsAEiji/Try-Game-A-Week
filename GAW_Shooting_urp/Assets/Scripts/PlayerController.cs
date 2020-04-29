@@ -10,8 +10,6 @@ public class PlayerController : MonoBehaviour
     public bool FireFlag { get; set; }
     public bool Fire2Flag { get; set; }
 
-
-
     [Header("弾丸発射関連")]
     [SerializeField] GameObject Bullet;
     [SerializeField] Transform firePoint;
