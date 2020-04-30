@@ -9,6 +9,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] PlayerStatus status;
     [Header("StatusUI")]
     [SerializeField] Image LpBar;
+    [SerializeField] Text LpParcent;
     [Header("BulletsHUD")]
     [SerializeField] Image BulletHUDBoder;
     [SerializeField] Text BulletsText;
@@ -39,7 +40,9 @@ public class UIManager : MonoBehaviour
     {
         float lpAmount = status.PlayerLp / status.PlayerMaxLp;
         LpBar.fillAmount = Mathf.Lerp(0f, 0.5f,lpAmount);
-        
+        LpParcent.text = (lpAmount * 100).ToString("00.0") + "%";
+
+        //
         string nowBulletsTxt = "<b>" + player.magazine + "</b>";
         
         nowBulletsTxt += "<size=BulletsText.fontSize / 2>/" + player.MaxBullets + "</size>";
