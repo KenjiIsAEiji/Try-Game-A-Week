@@ -13,7 +13,7 @@ public class Raizer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        period += Random.Range(-(period - 1f), 0f);
+        period += Random.Range(-(period * .5f), 0f);
         position = transform.position;
         velocity = -transform.forward * 10f;
     }
