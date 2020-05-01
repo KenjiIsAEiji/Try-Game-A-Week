@@ -32,7 +32,6 @@ public class PlayerStatus : MonoBehaviour
         {
             PlayerLp = 0;
             IsDead = true;
-            Instantiate(deadFx, transform.position, transform.rotation);
         }
         else if ((PlayerLp / PlayerMaxLp) <= WarningPointRaito)
         {
@@ -43,6 +42,8 @@ public class PlayerStatus : MonoBehaviour
     public void Damage(float damageLp)
     {
         PlayerLp -= damageLp;
+
+        //addDeadFX
     }
 
     public void UseBullet()
