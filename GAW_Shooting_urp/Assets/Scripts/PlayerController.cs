@@ -178,6 +178,7 @@ public class PlayerController : MonoBehaviour
         {
             GameObject bullet = Instantiate(Bullet, firePoint.position, firePoint.rotation);
             bullet.GetComponent<Rigidbody>().AddForce(firePoint.forward * bulletVelocity);
+            bullet.GetComponent<BulletFXs>().DamegePoint = status.GetBulletDamege();
 
             magazine--;
             status.UseBullet();
@@ -197,8 +198,10 @@ public class PlayerController : MonoBehaviour
         for(int i = 0; i < TargetEnemys.Count; i++)
         {
             GameObject raizer = Instantiate(Raizer, firePoint.position, firePoint.rotation);
+            Raizer rai = raizer.GetComponent<Raizer>();
 
-            raizer.GetComponent<Raizer>().target = TargetEnemys[i];
+            rai.target = TargetEnemys[i];
+            rai.DamegePoint = status.GetRaizerDamege();
         }
         TargetEnemys = new List<Transform>();
     }

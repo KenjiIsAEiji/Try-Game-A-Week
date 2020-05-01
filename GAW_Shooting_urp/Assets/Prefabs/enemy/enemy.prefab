@@ -262,12 +262,10 @@ MonoBehaviour:
   TargetMark: {fileID: 897909581}
   MaxHelth: 5
   EnemyHelth: 0
-  MaxSpeed: 2
-  EnemyBullet: {fileID: 8846148960806846918, guid: 8b3704752a8182949af1f209b40083ae,
+  Data: {fileID: 11400000, guid: c4136264cfcb1e945b10d52c1862989b, type: 2}
+  EnemyBullet: {fileID: 40116374114104787}
+  EnergyCellModel: {fileID: 6554944719446946917, guid: 16da28a0bf978db42a0f3a12d1534f54,
     type: 3}
-  AimDistance: 15
-  fireRaito: 0.4
-  bulletSpeed: 10
   firePoint: {fileID: 6443745483408120742}
   DeadFX: {fileID: 1150934714579380, guid: 779aa8c25fbd0e1488637639c9fff976, type: 3}
 --- !u!136 &7051632976712562496

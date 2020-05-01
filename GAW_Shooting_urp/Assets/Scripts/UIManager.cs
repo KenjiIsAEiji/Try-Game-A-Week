@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour
     [Header("StatusUI")]
     [SerializeField] Image LpBar;
     [SerializeField] Text LpParcent;
+    [SerializeField] Color LpWarningColor;
     [Header("BulletsHUD")]
     [SerializeField] Image BulletHUDBoder;
     [SerializeField] Text BulletsText;
@@ -41,6 +42,15 @@ public class UIManager : MonoBehaviour
         float lpAmount = status.PlayerLp / status.PlayerMaxLp;
         LpBar.fillAmount = Mathf.Lerp(0f, 0.5f,lpAmount);
         LpParcent.text = (lpAmount * 100).ToString("00.0") + "%";
+
+        if (status.LpWarning)
+        {
+            LpParcent.color = LpWarningColor;
+        }
+        else
+        {
+            LpParcent.color = Color.white;
+        }
 
         //
         string nowBulletsTxt = "<b>" + player.magazine + "</b>";

@@ -9,6 +9,7 @@ public class Raizer : MonoBehaviour
     public Transform target;
     [SerializeField] float period;
 
+    public float DamegePoint;
     
     // Start is called before the first frame update
     void Start()
@@ -32,7 +33,7 @@ public class Raizer : MonoBehaviour
         if(period < 0f)
         {
             Destroy(this.gameObject);
-            target.transform.GetComponent<EnemyController>().Damage(5);
+            target.transform.GetComponent<EnemyController>().Damage(DamegePoint);
             return;
         }
 
