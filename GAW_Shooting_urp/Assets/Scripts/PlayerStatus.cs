@@ -44,6 +44,7 @@ public class PlayerStatus : MonoBehaviour
         PlayerLp -= damageLp;
 
         //addDeadFX
+        if (PlayerLp <= 0) Instantiate(deadFx, transform.position, transform.rotation);
     }
 
     public void UseBullet()

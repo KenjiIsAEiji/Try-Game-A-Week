@@ -17,7 +17,8 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
 
     [SerializeField] GameState gameState;
 
-    [SerializeField] GameObject EnemyModel;
+    [SerializeField] GameObject NormalEnemyModel;
+    [SerializeField] GameObject MiddleEnemyModel;
 
     [Header("Player参照用")]
     [SerializeField] PlayerController player;
@@ -25,7 +26,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
 
     [Header("Score表示")]
     [SerializeField] CanvasGroup canvasGroup;
-    [SerializeField] Text ScoreText;
+    [SerializeField] Text ResultText;
 
     [Header("Beaco&Enemyリスト")]
     [SerializeField] List<SpawnBeacon> beacons;
@@ -41,9 +42,10 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     [SerializeField] int WaveBonus = 100;
 
     //スコア算出用変数
-    [SerializeField] int nomalDestroy = 0;
-    [SerializeField] int middleDestroy = 0;
+    int nomalDestroy = 0;
+    int middleDestroy = 0;
     int WaveCount = -1;
+    string scoreTxt;
 
     // Start is called before the first frame update
     void Start()
@@ -79,13 +81,19 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
 
                 break;
             case GameState.End:
+                int score = (nomalDestroy * nomalPoint) + (middleDestroy * middlePoint) + (WaveCount * WaveBonus);
+
+                scoreTxt = "nomalEnemy Destroied  " + (nomalDestroy * nomalPoint).ToString() +"p\n";
+                scoreTxt += "middleEnemy Destroied  " + (middleDestroy * middlePoint).ToString() +"p\n";
+                scoreTxt += "Wave Bonus  " + WaveCount + " Waves  " + (WaveCount * WaveBonus).ToString() + "p\n";
+                scoreTxt += "<size= 60>Score  " + score + "p</size>";
+
+                
                 player.enabled = false;
                 player.GetComponent<Collider>().enabled = false;
                 player.GetComponent<Rigidbody>().isKinematic = true;
 
                 Debug.Log("Game Over");
-                Debug.Log("nomalEnemy Destroied" + nomalDestroy + "*" + nomalPoint + "=" + (nomalDestroy * nomalPoint).ToString());
-                Debug.Log("Wave Bonus" + WaveCount + "*" + WaveBonus + "=" + (WaveCount * WaveBonus).ToString());
 
                 if (Keyboard.current.spaceKey.isPressed && resulted)
                 {
@@ -100,12 +108,22 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     void GameOverAnimation()
     {
         Time.timeScale = 0.1f;
+
         canvasGroup.DOFade(1f, 0.1f).SetDelay(0.2f).OnComplete(() => { 
             
             Time.timeScale = 1f;
+            ResultUIAnimation();
+
         });
+    }
 
+    void ResultUIAnimation()
+    {
+        ResultText.DOText(scoreTxt, scoreTxt.Length * 0.01f).SetEase(Ease.Linear).OnComplete(() => {
 
+            resulted = true;
+        
+        });
     }
 
     void EnemySpawn(int enemys)
@@ -141,7 +159,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
             for (int j = 0; j < choiceBeacons.Count; j++)
             {
                 Transform spawn = choiceBeacons[j].transform;
-                GameObject enemy = Instantiate(EnemyModel, spawn.position, spawn.rotation);
+                GameObject enemy = Instantiate(MiddleEnemyModel, spawn.position, spawn.rotation);
                 Enemys.Add(enemy);
             }
         }
@@ -149,7 +167,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         for (int k = 0; k < odd; k++)
         {
             Transform spawn = choiceBeacons[k].transform;
-            GameObject enemy = Instantiate(EnemyModel, spawn.position, spawn.rotation);
+            GameObject enemy = Instantiate(MiddleEnemyModel, spawn.position, spawn.rotation);
             Enemys.Add(enemy);
         }
     }
