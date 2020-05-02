@@ -48,6 +48,9 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     [SerializeField] int nomalPoint = 10;
     [SerializeField] int middlePoint = 35;
     [SerializeField] int WaveBonus = 100;
+    [Header("Audio")]
+    [SerializeField] AudioSource fightBGM;
+    [SerializeField] AudioSource startBGM;
 
     //スコア算出用変数
     int nomalDestroy = 0;
@@ -63,6 +66,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         spawnEnemys = BaseSpawnEnemys - 1;
         gameState = GameState.Ready;
         StartUIAnimation();
+        startBGM.Play();
     }
 
     // Update is called once per frame
@@ -81,6 +85,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
                     PlayerStatusReset();
                     gameState = GameState.Play;
                     ToPlayAnimation();
+                    fightBGM.Play();
                 }
 
                 break;
@@ -174,11 +179,15 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         Sequence sequence = DOTween.Sequence();
         sequence.Append(StartCanvasGroup.DOFade(0f, 0.1f));
         sequence.Join(HudCanvasGroup.DOFade(1f, 0.1f));
+        sequence.Join(startBGM.DOFade(0, 0.1f));
+        sequence.Join(fightBGM.DOFade(1f, 0.1f));
+
         sequence.Play().OnComplete(() =>
         {
             StartCanvasGroup.alpha = 0;
             EndCanvasGroup.alpha = 0;
             HudCanvasGroup.alpha = 1;
+            startBGM.Stop();
         });
     }
 
