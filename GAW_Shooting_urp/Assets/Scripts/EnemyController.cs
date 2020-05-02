@@ -13,16 +13,15 @@ public class EnemyController : MonoBehaviour
     public float EnemyHelth;
 
     [Header("コントロールパラメータ")]
-    [SerializeField] float MaxSpeed = 15f;
-    [SerializeField] GameObject EnemyBullet;
-    [SerializeField] float AimDistance = 10f;
-    [SerializeField] float fireRaito = 0.4f;
-    [SerializeField] float bulletSpeed = 10f;
+    [SerializeField] EnemyData Data;
+    //[SerializeField] GameObject EnemyBullet;
+    [SerializeField] GameObject EnergyCellModel;
     [SerializeField] Transform firePoint;
-
     private bool attacking = false;
 
     [SerializeField] GameObject DeadFX;
+
+    [SerializeField] AudioSource fireAudio;
 
     Transform playerTransform;
     
@@ -32,7 +31,7 @@ public class EnemyController : MonoBehaviour
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         EnemyHelth = MaxHelth;
 
-        agent.speed = MaxSpeed;
+        agent.speed = Data.EnemyMaxSpeed;
     }
 
     // Update is called once per frame
@@ -41,12 +40,12 @@ public class EnemyController : MonoBehaviour
         agent.SetDestination(playerTransform.position);
 
         Vector3 distance = transform.position - playerTransform.position;
-        if(distance.magnitude <= AimDistance)
+        if(distance.magnitude <= Data.AimDistance)
         {
             NavMeshHit hit;
             if(!agent.Raycast(playerTransform.position,out hit))
             {
-                agent.speed = MaxSpeed / 2;
+                agent.speed = Data.EnemyMaxSpeed / 2;
                 agent.updateRotation = false;
                 transform.LookAt(playerTransform.position);
                 if (!attacking)
@@ -57,7 +56,7 @@ public class EnemyController : MonoBehaviour
             }
             else
             {
-                agent.speed = MaxSpeed;
+                agent.speed = Data.EnemyMaxSpeed;
                 agent.updateRotation = true;
                 attacking = false;
                 StopCoroutine(AttackTimer());
@@ -65,7 +64,7 @@ public class EnemyController : MonoBehaviour
         }
         else
         {
-            agent.speed = MaxSpeed;
+            agent.speed = Data.EnemyMaxSpeed;
             agent.updateRotation = true;
             attacking = false;
             StopCoroutine(AttackTimer());
@@ -77,16 +76,17 @@ public class EnemyController : MonoBehaviour
         while (true)
         {
             BulletFire();
-            yield return new WaitForSeconds(fireRaito);
+            yield return new WaitForSeconds(Data.FireRaito);
             if (!attacking) yield break;
         }
     }
     
     void BulletFire()
     {
-        GameObject bullet = Instantiate(EnemyBullet, firePoint.position, firePoint.rotation);
-        bullet.GetComponent<Rigidbody>().AddForce(firePoint.forward * bulletSpeed, ForceMode.Impulse);
-        Destroy(bullet, 1f);
+        GameObject bullet = Instantiate(Data.BulletModel, firePoint.position, firePoint.rotation);
+        bullet.GetComponent<Rigidbody>().AddForce(firePoint.forward * Data.BulletSpeed, ForceMode.Impulse);
+        fireAudio.Play();
+        Destroy(bullet, Data.BulletLifeTime);
     }
 
     public void TargetFromPlayer()
@@ -100,8 +100,19 @@ public class EnemyController : MonoBehaviour
         if (EnemyHelth <= 0)
         {
             GameObject obj = Instantiate(DeadFX, transform.position, Quaternion.LookRotation(Vector3.up));
+
+            GameManager.Instance.Enemys.Remove(this.gameObject);
+            GameManager.Instance.EnemyDestroyed(Data.MiddleEnemyType);
+
             Destroy(this.gameObject);
             Destroy(obj, 3f);
+
+            float daice = Random.Range(0, 100);
+            if(daice <= Data.EnergyCellPercent)
+            {
+                Instantiate(EnergyCellModel, transform.position, transform.rotation);
+            }
+
         }
     }
 }

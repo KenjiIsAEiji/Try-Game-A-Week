@@ -8,14 +8,16 @@ public class Raizer : MonoBehaviour
     Vector3 position;
     public Transform target;
     [SerializeField] float period;
+    [SerializeField] GameObject hitFx;
 
+    public float DamegePoint;
     
     // Start is called before the first frame update
     void Start()
     {
         period += Random.Range(-(period * .5f), 0f);
         position = transform.position;
-        velocity = -transform.forward * 10f;
+        velocity = transform.up * 10f;
     }
 
     // Update is called once per frame
@@ -32,7 +34,10 @@ public class Raizer : MonoBehaviour
         if(period < 0f)
         {
             Destroy(this.gameObject);
-            target.transform.GetComponent<EnemyController>().Damage(5);
+            target.transform.GetComponent<EnemyController>().Damage(DamegePoint);
+
+            GameObject obj = Instantiate(hitFx, transform.position, transform.rotation);
+            Destroy(obj, 1f);
             return;
         }
 

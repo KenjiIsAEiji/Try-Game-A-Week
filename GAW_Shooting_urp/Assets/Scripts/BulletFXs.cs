@@ -6,6 +6,7 @@ public class BulletFXs : MonoBehaviour
 {
     [SerializeField] GameObject nomalHitPaticle;
     [SerializeField] GameObject EnemyHitPaticle;
+    public float DamegePoint;
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -14,7 +15,7 @@ public class BulletFXs : MonoBehaviour
 
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            collision.gameObject.GetComponent<EnemyController>().Damage(1);
+            collision.gameObject.GetComponent<EnemyController>().Damage(1f);
             EnemyHitFX(contact.point, Quaternion.LookRotation(contact.normal));
         }
 

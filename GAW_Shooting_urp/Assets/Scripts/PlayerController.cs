@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("追尾レーザ関連")]
     public bool RaizerMode = false;
+    [SerializeField] LineRenderer RaizerPointer;
     [SerializeField] GameObject Raizer;
     [SerializeField] Transform pointer;
     [SerializeField] LayerMask TargettingLayer;
@@ -51,7 +52,11 @@ public class PlayerController : MonoBehaviour
     public int magazine = 0;
     public bool reloading = false;
     [SerializeField] float ReloadTime = 5f;
-
+    [SerializeField] AudioSource bulletFireAudio;
+    [SerializeField] AudioSource raizerFireAudio;
+    [SerializeField] AudioSource reroadAudio;
+    [SerializeField] AudioSource CastAudio;
+    [SerializeField] AudioSource ModeChange;
 
     // Start is called before the first frame update
     void Start()
@@ -79,6 +84,7 @@ public class PlayerController : MonoBehaviour
             {
                 swithTrigger = true;
                 RaizerMode = !RaizerMode;
+                ModeChange.Play();
             }
         }
         else
@@ -89,11 +95,13 @@ public class PlayerController : MonoBehaviour
         if(Casting < RecastTime)
         {
             Casting += Time.deltaTime;
+            if (Casting >= RecastTime) CastAudio.Play();
         }
-        else
+        else 
         {
             Casting = RecastTime;
         }
+        RaizerPointer.enabled = RaizerMode;
 
         if (RaizerMode)
         {
@@ -145,6 +153,7 @@ public class PlayerController : MonoBehaviour
         if (ReloadButton && !reloading)
         {
             StartCoroutine(Reload());
+            reroadAudio.Play();
         }
 
         if (Physics.Linecast(charaRay.position, (charaRay.position - transform.up * charaRayRange)))
@@ -178,6 +187,9 @@ public class PlayerController : MonoBehaviour
         {
             GameObject bullet = Instantiate(Bullet, firePoint.position, firePoint.rotation);
             bullet.GetComponent<Rigidbody>().AddForce(firePoint.forward * bulletVelocity);
+            bullet.GetComponent<BulletFXs>().DamegePoint = status.GetBulletDamege();
+
+            bulletFireAudio.Play();
 
             magazine--;
             status.UseBullet();
@@ -197,10 +209,13 @@ public class PlayerController : MonoBehaviour
         for(int i = 0; i < TargetEnemys.Count; i++)
         {
             GameObject raizer = Instantiate(Raizer, firePoint.position, firePoint.rotation);
+            Raizer rai = raizer.GetComponent<Raizer>();
 
-            raizer.GetComponent<Raizer>().target = TargetEnemys[i];
+            rai.target = TargetEnemys[i];
+            rai.DamegePoint = status.GetRaizerDamege();
         }
         TargetEnemys = new List<Transform>();
+        raizerFireAudio.Play();
     }
 
     IEnumerator Reload()
@@ -209,6 +224,7 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(ReloadTime);
         magazine = MaxBullets;
         reloading = false;
+        reroadAudio.Stop();
         yield break;
     }
 
