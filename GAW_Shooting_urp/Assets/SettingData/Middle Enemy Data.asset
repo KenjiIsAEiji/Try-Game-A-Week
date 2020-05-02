@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: Middle Enemy Data
   m_EditorClassIdentifier: 
   name: middle
-  EnemyMaxSpeed: 2
+  MiddleEnemyType: 1
+  EnemyMaxSpeed: 1.5
   AimDistance: 10
   FireRaito: 30
   BulletSpeed: 0
-  EnergyCellPercent: 10
+  EnergyCellPercent: 50
   BulletModel: {fileID: 6168154477684175001, guid: 97064a56b5e38a945bfa59c77083e67b,
     type: 3}
+  BulletLifeTime: 3

@@ -6,6 +6,7 @@ using UnityEngine;
 public class EnemyData : ScriptableObject
 {
     [SerializeField] string name;
+    public bool MiddleEnemyType;
     public float EnemyMaxSpeed = 2f;
     public float AimDistance = 8f;
     public float FireRaito = 0.4f;
@@ -13,4 +14,5 @@ public class EnemyData : ScriptableObject
     public float EnergyCellPercent = 10f;
 
     public GameObject BulletModel;
+    public float BulletLifeTime;
 }

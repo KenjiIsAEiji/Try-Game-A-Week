@@ -24,16 +24,24 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     [SerializeField] PlayerController player;
     [SerializeField] PlayerStatus status;
 
-    [Header("Score表示")]
-    [SerializeField] CanvasGroup canvasGroup;
+    [Header("Score表示&HUD全般")]
+    [SerializeField] CanvasGroup EndCanvasGroup;
+    [SerializeField] CanvasGroup HudCanvasGroup;
+    [SerializeField] CanvasGroup StartCanvasGroup;
+    [SerializeField] Text WaveText;
     [SerializeField] Text ResultText;
+    [SerializeField] Text SpaceTo;
 
-    [Header("Beaco&Enemyリスト")]
+    [Header("Beacon&Enemyリスト")]
     [SerializeField] List<SpawnBeacon> beacons;
     public List<GameObject> Enemys;
 
     [Header("Wave調整用パラメータ")]
-    [SerializeField] int testSpawnEnemys = 5;
+    [SerializeField] int BaseSpawnEnemys = 5;
+    int spawnEnemys;
+    [SerializeField] int MiddleEnemyParcent = 10;
+    [SerializeField] int LpBonusWaves = 5;
+    
     bool resulted = false;
 
     [Header("スコア基底ポイント")]
@@ -52,6 +60,9 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     {
         player = FindObjectOfType<PlayerController>();
         status = FindObjectOfType<PlayerStatus>();
+        spawnEnemys = BaseSpawnEnemys - 1;
+        gameState = GameState.Ready;
+        StartUIAnimation();
     }
 
     // Update is called once per frame
@@ -60,7 +71,17 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         switch (gameState)
         {
             case GameState.Ready:
-                //resulted = false;
+                resulted = false;
+                nomalDestroy = 0;
+                middleDestroy = 0;
+                WaveCount = -1;
+
+                if (Keyboard.current.spaceKey.isPressed)
+                {
+                    PlayerStatusReset();
+                    gameState = GameState.Play;
+                    ToPlayAnimation();
+                }
 
                 break;
             case GameState.Play:
@@ -68,9 +89,19 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
 
                 if(Enemys.Count <= 0)
                 {
-                    EnemySpawn(testSpawnEnemys);
+                    spawnEnemys++;
+                    SpawnPointChoice(spawnEnemys);
                     WaveCount++;
+
+                    if(WaveCount % LpBonusWaves == 0)
+                    {
+                        status.AddLp(status.PlayerMaxLp / 0.75f);
+                    }
+
+                    NextWaveAnimation();
+
                     Debug.Log("Wave "+ WaveCount);
+
                 }
 
                 if (status.IsDead)
@@ -87,29 +118,75 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
                 scoreTxt += "middleEnemy Destroied  " + (middleDestroy * middlePoint).ToString() +"p\n";
                 scoreTxt += "Wave Bonus  " + WaveCount + " Waves  " + (WaveCount * WaveBonus).ToString() + "p\n";
                 scoreTxt += "<size= 60>Score  " + score + "p</size>";
-
                 
                 player.enabled = false;
                 player.GetComponent<Collider>().enabled = false;
                 player.GetComponent<Rigidbody>().isKinematic = true;
 
-                Debug.Log("Game Over");
-
-                if (Keyboard.current.spaceKey.isPressed && resulted)
+                if (Keyboard.current.enterKey.isPressed && resulted)
                 {
                     SceneManager.LoadScene(0);
-                    gameState = GameState.Play;
+                    gameState = GameState.Ready;
                 }
 
                 break;
         }
+        SpaceTo.enabled = resulted;
+
+    }
+
+    void PlayerStatusReset()
+    {
+        player.magazine = player.MaxBullets;
+        status.PlayerLp = status.PlayerMaxLp;
+    }
+
+    //
+
+    void NextWaveAnimation()
+    {
+        string txt = "Wave " + WaveCount;
+        Sequence s = DOTween.Sequence();
+        s.Append(WaveText.DOText(txt, 2.5f, true, ScrambleMode.All));
+        s.Append(WaveText.DOText("", 2.5f, true, ScrambleMode.All));
+        s.Play().OnComplete(() =>
+        {
+            WaveText.text = "";
+        });
+    }
+    
+    void StartUIAnimation()
+    {
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(StartCanvasGroup.DOFade(1f, 0.1f));
+        sequence.Join(EndCanvasGroup.DOFade(0f, 0.1f));
+        sequence.Join(HudCanvasGroup.DOFade(0f, 0.1f));
+        sequence.Play().OnComplete(() =>
+        {
+            StartCanvasGroup.alpha = 1;
+            EndCanvasGroup.alpha = 0;
+            HudCanvasGroup.alpha = 0;
+        });
+    }
+
+    void ToPlayAnimation()
+    {
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(StartCanvasGroup.DOFade(0f, 0.1f));
+        sequence.Join(HudCanvasGroup.DOFade(1f, 0.1f));
+        sequence.Play().OnComplete(() =>
+        {
+            StartCanvasGroup.alpha = 0;
+            EndCanvasGroup.alpha = 0;
+            HudCanvasGroup.alpha = 1;
+        });
     }
 
     void GameOverAnimation()
     {
         Time.timeScale = 0.1f;
 
-        canvasGroup.DOFade(1f, 0.1f).SetDelay(0.2f).OnComplete(() => { 
+        EndCanvasGroup.DOFade(1f, 0.1f).SetDelay(0.2f).OnComplete(() => { 
             
             Time.timeScale = 1f;
             ResultUIAnimation();
@@ -126,7 +203,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         });
     }
 
-    void EnemySpawn(int enemys)
+    void SpawnPointChoice(int enemys)
     {
         //spawnPoint choice
         Vector3 playerPosition = player.gameObject.transform.position;
@@ -159,17 +236,33 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
             for (int j = 0; j < choiceBeacons.Count; j++)
             {
                 Transform spawn = choiceBeacons[j].transform;
-                GameObject enemy = Instantiate(MiddleEnemyModel, spawn.position, spawn.rotation);
-                Enemys.Add(enemy);
+                Spawn(spawn);
             }
         }
 
         for (int k = 0; k < odd; k++)
         {
             Transform spawn = choiceBeacons[k].transform;
-            GameObject enemy = Instantiate(MiddleEnemyModel, spawn.position, spawn.rotation);
-            Enemys.Add(enemy);
+            Spawn(spawn);
         }
+    }
+
+    private void Spawn(Transform point)
+    {
+        GameObject enemy;
+
+        int dice = Random.Range(1, 101);
+
+        if(dice <= MiddleEnemyParcent)
+        {
+            enemy = MiddleEnemyModel;
+        }
+        else
+        {
+            enemy = NormalEnemyModel;
+        }
+
+        Enemys.Add(Instantiate(enemy, point.position, point.rotation));
     }
 
     public void EnemyDestroyed(bool middleType)

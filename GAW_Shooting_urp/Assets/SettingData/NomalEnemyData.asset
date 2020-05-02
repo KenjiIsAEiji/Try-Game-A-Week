@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: NomalEnemyData
   m_EditorClassIdentifier: 
   name: normal
+  MiddleEnemyType: 0
   EnemyMaxSpeed: 2
   AimDistance: 8
-  FireRaito: 0.4
+  FireRaito: 1
   BulletSpeed: 10
   EnergyCellPercent: 10
   BulletModel: {fileID: 8846148960806846918, guid: 8b3704752a8182949af1f209b40083ae,
     type: 3}
+  BulletLifeTime: 1

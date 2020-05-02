@@ -37,6 +37,10 @@ public class PlayerStatus : MonoBehaviour
         {
             LpWarning = true;
         }
+        else
+        {
+            LpWarning = false;
+        }
     }
 
     public void Damage(float damageLp)

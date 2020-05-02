@@ -8,6 +8,7 @@ public class Raizer : MonoBehaviour
     Vector3 position;
     public Transform target;
     [SerializeField] float period;
+    [SerializeField] GameObject hitFx;
 
     public float DamegePoint;
     
@@ -34,6 +35,9 @@ public class Raizer : MonoBehaviour
         {
             Destroy(this.gameObject);
             target.transform.GetComponent<EnemyController>().Damage(DamegePoint);
+
+            GameObject obj = Instantiate(hitFx, transform.position, transform.rotation);
+            Destroy(obj, 1f);
             return;
         }
 

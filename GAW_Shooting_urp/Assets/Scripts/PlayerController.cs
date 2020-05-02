@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("追尾レーザ関連")]
     public bool RaizerMode = false;
+    [SerializeField] LineRenderer RaizerPointer;
     [SerializeField] GameObject Raizer;
     [SerializeField] Transform pointer;
     [SerializeField] LayerMask TargettingLayer;
@@ -94,6 +95,7 @@ public class PlayerController : MonoBehaviour
         {
             Casting = RecastTime;
         }
+        RaizerPointer.enabled = RaizerMode;
 
         if (RaizerMode)
         {

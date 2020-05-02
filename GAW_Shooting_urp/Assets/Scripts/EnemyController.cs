@@ -84,7 +84,7 @@ public class EnemyController : MonoBehaviour
     {
         GameObject bullet = Instantiate(Data.BulletModel, firePoint.position, firePoint.rotation);
         bullet.GetComponent<Rigidbody>().AddForce(firePoint.forward * Data.BulletSpeed, ForceMode.Impulse);
-        //Destroy(bullet, 1f);
+        Destroy(bullet, Data.BulletLifeTime);
     }
 
     public void TargetFromPlayer()
@@ -100,7 +100,7 @@ public class EnemyController : MonoBehaviour
             GameObject obj = Instantiate(DeadFX, transform.position, Quaternion.LookRotation(Vector3.up));
 
             GameManager.Instance.Enemys.Remove(this.gameObject);
-            GameManager.Instance.EnemyDestroyed(false);
+            GameManager.Instance.EnemyDestroyed(Data.MiddleEnemyType);
 
             Destroy(this.gameObject);
             Destroy(obj, 3f);
