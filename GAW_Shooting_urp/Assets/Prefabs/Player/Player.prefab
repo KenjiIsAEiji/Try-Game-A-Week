@@ -7707,7 +7707,7 @@ MonoBehaviour:
   TargetEnemys: []
   RecastTime: 20
   Casting: 0
-  PlayerSpeed: 5.33
+  PlayerSpeed: 7
   charaRay: {fileID: 5101050808557951278}
   charaRayRange: 0.32
   MainCam: {fileID: 0}
