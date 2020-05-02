@@ -52,7 +52,11 @@ public class PlayerController : MonoBehaviour
     public int magazine = 0;
     public bool reloading = false;
     [SerializeField] float ReloadTime = 5f;
-
+    [SerializeField] AudioSource bulletFireAudio;
+    [SerializeField] AudioSource raizerFireAudio;
+    [SerializeField] AudioSource reroadAudio;
+    [SerializeField] AudioSource CastAudio;
+    [SerializeField] AudioSource ModeChange;
 
     // Start is called before the first frame update
     void Start()
@@ -80,6 +84,7 @@ public class PlayerController : MonoBehaviour
             {
                 swithTrigger = true;
                 RaizerMode = !RaizerMode;
+                ModeChange.Play();
             }
         }
         else
@@ -90,8 +95,9 @@ public class PlayerController : MonoBehaviour
         if(Casting < RecastTime)
         {
             Casting += Time.deltaTime;
+            if (Casting >= RecastTime) CastAudio.Play();
         }
-        else
+        else 
         {
             Casting = RecastTime;
         }
@@ -147,6 +153,7 @@ public class PlayerController : MonoBehaviour
         if (ReloadButton && !reloading)
         {
             StartCoroutine(Reload());
+            reroadAudio.Play();
         }
 
         if (Physics.Linecast(charaRay.position, (charaRay.position - transform.up * charaRayRange)))
@@ -182,6 +189,8 @@ public class PlayerController : MonoBehaviour
             bullet.GetComponent<Rigidbody>().AddForce(firePoint.forward * bulletVelocity);
             bullet.GetComponent<BulletFXs>().DamegePoint = status.GetBulletDamege();
 
+            bulletFireAudio.Play();
+
             magazine--;
             status.UseBullet();
 
@@ -206,6 +215,7 @@ public class PlayerController : MonoBehaviour
             rai.DamegePoint = status.GetRaizerDamege();
         }
         TargetEnemys = new List<Transform>();
+        raizerFireAudio.Play();
     }
 
     IEnumerator Reload()
@@ -214,6 +224,7 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(ReloadTime);
         magazine = MaxBullets;
         reloading = false;
+        reroadAudio.Stop();
         yield break;
     }
 

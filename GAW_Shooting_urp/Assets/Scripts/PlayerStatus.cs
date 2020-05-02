@@ -15,6 +15,7 @@ public class PlayerStatus : MonoBehaviour
     [SerializeField] float WarningPointRaito = 0.2f;
     [SerializeField] ParticleSystem HealFx;
     [SerializeField] GameObject deadFx;
+    [SerializeField] AudioSource LpGetAudio;
 
     public bool IsDead = false;
     public bool LpWarning = false;
@@ -88,5 +89,6 @@ public class PlayerStatus : MonoBehaviour
             PlayerLp += point;
         }
         HealFx.Play();
+        LpGetAudio.Play();
     }
 }

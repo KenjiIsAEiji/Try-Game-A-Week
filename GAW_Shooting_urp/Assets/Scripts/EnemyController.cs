@@ -17,10 +17,11 @@ public class EnemyController : MonoBehaviour
     //[SerializeField] GameObject EnemyBullet;
     [SerializeField] GameObject EnergyCellModel;
     [SerializeField] Transform firePoint;
-
     private bool attacking = false;
 
     [SerializeField] GameObject DeadFX;
+
+    [SerializeField] AudioSource fireAudio;
 
     Transform playerTransform;
     
@@ -84,6 +85,7 @@ public class EnemyController : MonoBehaviour
     {
         GameObject bullet = Instantiate(Data.BulletModel, firePoint.position, firePoint.rotation);
         bullet.GetComponent<Rigidbody>().AddForce(firePoint.forward * Data.BulletSpeed, ForceMode.Impulse);
+        fireAudio.Play();
         Destroy(bullet, Data.BulletLifeTime);
     }
 
